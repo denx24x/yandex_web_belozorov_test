@@ -7,6 +7,7 @@ from wtforms.fields.html5 import EmailField
 from flask_login import LoginManager, login_required, logout_user, current_user, login_user
 from data.users import User
 from data.news import News
+import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
@@ -145,7 +146,8 @@ def index():
 
 def main():
     db_session.global_init("db/blogs.sqlite")
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(port=port, host='0.0.0.0')
 
 
 if __name__ == '__main__':
