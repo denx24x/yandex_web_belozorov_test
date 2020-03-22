@@ -97,7 +97,7 @@ def news():
     session = db_session.create_session()
     news = session.query(News)
     session.close()
-    return render_template("news.html", news=sorted(news, key=lambda x: x.created_date, reverse=True)[:3])
+    return render_template("news.html", news=sorted(news, key=lambda x: x.created_date, reverse=True))
 
 
 @app.route('/edit/news/<int:id>', methods=['GET', 'POST'])
