@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display:flex; flex-direction: row; align-items: center">
+    <h1><a  href="/news">Новости</a></h1>
+    {% if current_user.is_authenticated %}
+        <a class="btn btn-primary" href="/add/news">Добавить</a>
+    {% endif %}
+</div>
+{% for item in news%}
+<div class="col-md6 border rounded">
+    <div style="display:flex; flex-direction: row; align-items: center">
+        <h2>{{item.title}}</h2>
+        {% if current_user.is_authenticated %}
+            <a class="btn btn-primary" href="/edit/news/{{item.id}}">Изменить</a>
+        {% endif %}
+    </div>
+    <div>
+        {{item.content}}
+    </div>
+    <div>
+        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
