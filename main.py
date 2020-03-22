@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, Blueprint, jsonify, abort
 from flask_wtf import FlaskForm
 from data import db_session
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Length
 from wtforms.fields.html5 import EmailField
 from flask_login import LoginManager, login_required, logout_user, current_user, login_user
 from data.users import User
@@ -28,24 +28,24 @@ def logout():
 
 
 class LoginForm(FlaskForm):
-    email = EmailField('Почта', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
+    email = EmailField('Почта', validators=[DataRequired(), Length(0, 500)])
+    password = PasswordField('Пароль', validators=[DataRequired(), Length(0, 500)])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
 
 
 class RegisterForm(FlaskForm):
-    email = EmailField('Почта', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
-    password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
-    name = StringField('Имя пользователя', validators=[DataRequired()])
+    email = EmailField('Почта', validators=[DataRequired(), Length(0, 500)])
+    password = PasswordField('Пароль', validators=[DataRequired(), Length(0, 500)])
+    password_again = PasswordField('Повторите пароль', validators=[DataRequired(), Length(0, 500)])
+    name = StringField('Имя пользователя', validators=[DataRequired(), Length(0, 500)])
     about = TextAreaField("Немного о себе")
     submit = SubmitField('Войти')
 
 
 class NewsForm(FlaskForm):
-    title = StringField('Название', validators=[DataRequired()])
-    content = StringField('Содержание', validators=[DataRequired()])
+    title = StringField('Название', validators=[DataRequired(), Length(0, 500)])
+    content = StringField('Содержание', validators=[DataRequired(), Length(0, 500)])
     submit = SubmitField('Сохранить')
 
 
