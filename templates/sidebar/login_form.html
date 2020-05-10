@@ -1,0 +1,32 @@
+<div class="flex-col-md6 border rounded">
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+    <div id="login" class="p-1">
+        <div class="form-group">
+            <label for="InputEmail">Email</label>
+            <input type="email" class="form-control" id="InputEmail" aria-describedby="emailHelp">
+        </div>
+        <div class="form-group">
+            <label for="InputPassword">Пароль</label>
+            <input type="password" class="form-control" id="InputPassword">
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="Remember">
+            <label class="form-check-label" for="Remember">Запомнить</label>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="login()">Войти</button>
+        <a class="btn btn-primary btn-sm" data-toggle="collapse" href="#MoreButtons" role="button"
+                aria-expanded="false" aria-controls="collapseExample">
+            Еще
+        </a>
+        <div class="collapse" id="MoreButtons">
+            <hr>
+            <li><a data-toggle="modal" data-target="#ResetPasswordModal" href="">
+                Восстановить пароль
+            </a></li>
+            <li><a data-toggle="modal" data-target="#VerificationModal" href=""> Запросить повторное подтверждение аккаунта
+            </a></li>
+            <li><a href="/register">Зарегистрироваться</a></li>
+        </div>
+        <p class="text-secondary" id="LoginAnswer"></p>
+    </div>
+</div>

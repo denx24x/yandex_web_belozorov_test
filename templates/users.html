@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display:flex; flex-direction: row; align-items: center">
+    <h1>Пользователи</h1>
+</div>
+{% for item in users%}
+<div class="col-md6 border rounded">
+    <div>
+        <h4>id: {{item.id}}</h4>
+        <h4>Имя: {{item.name}}</h4>
+        <h4>Почта: {{item.email}}</h4>
+        <h4>Создан: {{item.created_date}}</h4>
+    </div>
+    <div>
+        <h6>Может комментировать: {{item.can_comment}}</h6>
+        <h6>Может добавлять и изменять моды: {{item.can_make_mods}}</h6>
+    </div>
+    <div>
+        <h6>Управление новостями: {{item.can_control_news}}</h6>
+        <h6>Управление модами: {{item.can_control_mods}}</h6>
+        <h6>Управление пользователями: {{item.can_control_users}}</h6>
+    </div>
+    <a class="btn btn-primary" href="/edit/users/{{item.id}}">Изменить</a>
+</div>
+{% endfor %}
+{% endblock %}

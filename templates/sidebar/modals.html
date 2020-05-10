@@ -1,0 +1,48 @@
+
+<!-- ResetPasswordModal -->
+<div class="modal fade" id="ResetPasswordModal" data-backdrop="static" tabindex="-1" role="dialog"
+     aria-labelledby="ResetPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ResetPasswordModalLabel">Восстановление повтора</h5>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ResetPasswordModalEmail">Email</label>
+                    <input type="email" class="form-control" id="ResetPasswordModalEmail" aria-describedby="emailHelp">
+                </div>
+                <p class="text-secondary" id="ResetPasswordModalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" onclick="reset_password()">Запросить</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ResetPasswordModal -->
+
+<!-- Resend Verification modal -->
+<div class="modal fade" id="VerificationModal" tabindex="-1" role="dialog" aria-labelledby="VerificationModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="VerificationModalTitle">Повторный запрос подтверждения</h5>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="VerificationModalEmail">Email</label>
+                    <input type="email" class="form-control" id="VerificationModalEmail" aria-describedby="emailHelp">
+                </div>
+                <p class="text-secondary" id="VerificationModalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" onclick="resend_verification()">Запросить</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Resend Verification modal -->

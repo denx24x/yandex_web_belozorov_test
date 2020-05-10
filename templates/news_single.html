@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="col-md6 border rounded p-1">
+    <div class="d-flex justify-content-between">
+        <h2>{{item.title}}</h2>
+            <div align="right" class="p-2">
+            {% if current_user.is_authenticated and (current_user.id == item.user_id or current_user.can_control_news)%}
+                <a class="btn btn-primary" href="/edit/news/{{item.id}}">Изменить</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="textarea">
+        <pre>{{item.content}}</pre>
+    </div>
+    <div>
+        Автор - {{item.user.name}}, Обновлено - {{ ','.join(item.updated_date.__str__().split('.')[:-1]) }}, создано: {{ ','.join(item.created_date.__str__().split('.')[:-1]) }}
+    </div>
+</div>
+<h4>Комментарии</h4>
+{% if current_user.is_authenticated %}
+<div class="input-group mb-3">
+            <input class="form-control" id="CommentMain">
+            <button class="btn btn-primary" onclick="send_comment({{item.id}}, 'news', 'CommentMain');">Отправить</button>
+        </div>
+{% endif %}
+    <ul class="media-list">
+        {% include 'comments.html' %}
+    </ul>
+{% endblock %}

@@ -15,7 +15,7 @@
         </p>
         <p>
             {{ form.content.label }}<br>
-            {{ form.content(class="form-control") }}<br>
+            {{ form.content(class="form-control", rows="10") }}<br>
             {% for error in form.content.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
@@ -23,6 +23,7 @@
             {% endfor %}
         </p>
         <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+        <p>{{ form.abort(type="submit", class="btn btn-danger") }}</p>
         <div>{{ message }}</div>
     </form>
 {% endblock %}

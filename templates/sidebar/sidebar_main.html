@@ -1,0 +1,20 @@
+{% include 'sidebar/modals.html' %}
+<div class="sidenav p-2">
+    {% if current_user.is_authenticated %}
+        {% include 'sidebar/user_panel.html' %}
+    {% else %}
+        {% include 'sidebar/login_form.html' %}
+    {% endif %}
+    <div class="flex-col-md6 border rounded" id="BestTable">
+        <div class="text-justify">Лучшие пользователи:</div>
+        <hr>
+        <div id="BestTableContent">
+        </div>
+    </div>
+    <div class="flex-col-md6 border rounded" id="OnlineTable">
+        <div class="text-justify">Сейчас онлайн: <font id="OnlineCount">0</font></div>
+        <hr>
+        <div id="OnlineTableContent">
+        </div>
+    </div>
+</div>

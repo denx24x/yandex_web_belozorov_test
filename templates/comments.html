@@ -1,0 +1,53 @@
+{#
+- это чьто рекурсивный шаблон...
+- да.
+#}
+
+{% macro render_other(other_comments) %}
+    {% for item in other_comments %}
+    <div class="media">
+    <div class="media-left">
+        <img class="img-thumbnail" src="{{item[0].user.profile_image}}" width="90" height="90" alt="">
+    </div>
+    <div class="media-body col-md6 border rounded" id="comment-{{item[0].id}}">
+        <div class="media-heading">
+            <div class="row p-1">
+                <div class="col"><h5><a href="/profile/{{item[0].user.name}}">{{item[0].user.name}}</a></h5></div>
+                <div class="col" align="right">{{item[0].created_date}}</div>
+            </div>
+        </div>
+        <hr  style='margin: 0;'>
+        <div class="media-text text-justify word-break">{{item[0].content}}</div>
+        <hr style='margin: 0;'>
+        <div class="footer-comment">
+            <div class="row">
+                {% if current_user.is_authenticated %}
+                <div class="col" align="left"><a onclick="make_comment_field('{{item[0].id}}');" id="comment-reply-{{item[0].id}}">Ответить</a></div>
+                {% endif %}
+                <div class="col" align="right">
+                    <img {% if current_user.is_authenticated %} onclick="rate(1, {{ item[0].id }}, 'comment')" {% endif %}
+                         src="{{ url_for('static', filename='images/up.svg') }}">
+                    {% if rate and current_user.is_authenticated and rate.rating == 1 %}
+                    <font color="green">{{ item[0].get_rating().plus }}</font>
+                    {% else %}
+                    {{ item[0].get_rating().plus }}
+                    {% endif %}
+                    <img {% if current_user.is_authenticated %} onclick="rate(0, {{ item[0].id }}, 'comment')" {% endif %}
+                         src="{{ url_for('static', filename='images/down.svg') }}">
+                    {% if rate and current_user.is_authenticated and rate.rating == -1 %}
+                    <font color="red">{{ item[0].get_rating().minus }}</font>
+                    {% else %}
+                    {{ item[0].get_rating().minus }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% if item[1] %}
+            {{- render_other(item[1]) -}}
+            {% endif %}
+    </div>
+    </div>
+    {% endfor %}
+{% endmacro %}
+
+{{- render_other(comments) -}}

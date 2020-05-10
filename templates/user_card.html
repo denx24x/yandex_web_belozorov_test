@@ -1,0 +1,17 @@
+<div class="card">
+    <div>
+        <div class="text-justify"><a href="/profile/{{item.id}}"><h4>{{ item.name }}</h4></a></div>
+    </div>
+    <img class="card-img-top"  src="{{ item.profile_image }}" alt="Card image cap">
+    <div>
+        <div class="text-justify">
+            <img src="{{ url_for('static', filename='images/eye.svg') }}">
+            {{ item.get_view_count() }}
+            <img src="{{ url_for('static', filename='images/up.svg') }}">
+            {{ item.get_rating().plus }}
+            <img src="{{ url_for('static', filename='images/down.svg') }}">
+            {{ item.get_rating().minus }}
+        </div>
+        Автор - <a href="/profile/{{item.user.name}}">{{item.user.name}}</a>, Дата публикации - {{ ','.join(item.created_date.__str__().split('.')[:-1]) }}
+    </div>
+</div>

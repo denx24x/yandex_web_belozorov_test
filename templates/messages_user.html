@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        async function send(){
+            message = document.getElementById("message").value;
+            response = await fetch('/send_message?name={{receiver}}&message=' + message, {method: 'POST'});
+            if(response.ok){
+                document.getElementById("message").value = "";
+            }else{
+                alert('Ошибка ' + response.status + '!');
+            }
+        }
+    </script>
+    <h2 align="left">{{receiver}}</h2>
+        <div class="overflow-auto" style="max-height: 30em;" id="MessagesWrapper">
+            <div id="messagesContainer">
+            {% for item in messages%}
+                <div class="col-md6 border rounded p-1" align="{% if current_user.id == item.sender_id %}right{% else %}left{% endif %}">
+                    <p class="word-break">{{ item.message }}</p>
+                    <p>{{ ','.join(item.created_date.__str__().split('.')[:-1]) }}</p>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            <input class="form-control" id="message">
+            <button class="btn btn-primary" onclick="send()">Отправить</button>
+        </div>
+    </div>
+    <script>
+        var element = document.getElementById("MessagesWrapper");
+        element.scrollTop = element.scrollHeight;
+    </script>
+{% endblock %}

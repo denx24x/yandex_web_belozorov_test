@@ -5,12 +5,34 @@
 {% for item in news%}
 <div class="col-md6 border rounded">
     <h4>{{item.title}}</h4>
-    <div>
-        {{item.content}}
-    </div>
-    <div>
-        <h6>Автор - {{item.user.name}}, Дата написания - {{item.created_date}}</h6>
-    </div>
+    <hr>
+    <blockquote class="blockquote word-break">
+        {{item.content[:100]}}
+        {% if item.content|length > 100 %}
+            ...
+        {% endif %}
+    </blockquote>
+    <blockquote class="blockquote">
+        Автор - <a href="/profile/{{item.user.name}}">{{item.user.name}}</a>, Дата написания - {{ ','.join(item.created_date.__str__().split('.')[:-1]) }}
+    </blockquote>
 </div>
 {% endfor %}
+<h1><a  href="/mod">Новые модификации</a></h1>
+<div class="card-columns">
+    {% for item in mods_new %}
+        {% include 'mod_card.html' %}
+    {% endfor %}
+</div>
+<h1><a  href="/mod">Популярные модификации</a></h1>
+<div class="card-columns">
+    {% for item in mods_popular %}
+        {% include 'mod_card.html' %}
+    {% endfor %}
+</div>
+<h1><a  href="/mod">Лучшие модификации</a></h1>
+<div class="card-columns">
+    {% for item in mods_best %}
+        {% include 'mod_card.html' %}
+    {% endfor %}
+</div>
 {% endblock %}

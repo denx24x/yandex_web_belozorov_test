@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="d-flex justify-content-between">
+        <h1>Модификации</h1>
+        {% if current_user.is_authenticated %}
+        <div align="right" class="p-2">
+            <a class="btn btn-primary" href="/add/mod">Добавить</a>
+        </div>
+        {% endif %}
+    </div>
+<hr>
+<div class="card-columns">
+{% for item in mods%}
+    {% include 'mod_card.html' %}
+{% endfor %}
+</div>
+{% endblock %}

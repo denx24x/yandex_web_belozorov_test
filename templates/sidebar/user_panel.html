@@ -1,0 +1,21 @@
+<div class="flex-col-md6 border rounded">
+        <div>
+             <img class="img-fluid img-thumbnail" src="{{current_user.profile_image}}" align="right" width="80" height="80">
+            <br>
+            <div class="p-1"><h4>{{ current_user.name }}</h4></div>
+                <div class="p-1">
+                    <li><a href="/profile/{{current_user.name}}">Профиль</a></li>
+                </div>
+                <div class="p-1">
+                    <li><a href="/messages">Сообщения</a></li>
+                </div>
+                {% if current_user.can_control_users %}
+                <div class="p-1">
+                    <li><a href="/mods">Управление пользователями</a></li>
+                </div>
+                {% endif %}
+                <div class="p-1">
+                    <a class="btn btn-primary btn-sm" href="/logout">Выйти</a>
+                </div>
+        </div>
+</div>

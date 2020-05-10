@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if results[0] %}
+    <div class="card-columns">
+        {% for item in results%}
+            {% include 'mod_card.html' %}
+        {% endfor %}
+    </div>
+    {% else %}
+        <h2>Ничего не найдено!</h2>
+    {% endif %}
+{% endblock %}

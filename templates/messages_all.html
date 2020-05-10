@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        async function OpenUserDialog(){
+            var name = document.getElementById("username").value;
+            response = await fetch('/messages/' + name);
+            if(response.ok){
+                window.location.href = '/messages/' + name;
+            }else{
+                document.getElementById("usernameMessage").innerHTML = 'Неизвестный пользователь';
+            }
+        }
+    </script>
+
+    <!-- ResetPasswordModal -->
+    <div class="modal fade" id="UserDialog" tabindex="-1" role="dialog"
+         aria-labelledby="UserDialogLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="UserDialogLabel">Открыть диалог</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="username">Имя пользователя</label>
+                        <input class="form-control" id="username" >
+                    </div>
+                    <p class="text-secondary" id="usernameMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" onclick="OpenUserDialog()">Открыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ResetPasswordModal -->
+
+    <button class="btn btn-primary" data-toggle="modal" data-target="#UserDialog">Написать</button>
+    {% for item in messages%}
+        <div class="col-md6 border rounded">
+            <div class="text-justify">
+                <h4 align="right">{{ item[0] }}</h4>
+                <p align="right">{{ item[1][:100] }}{% if item[1][100] %}...{% endif %}</p>
+            </div>
+            <a class="btn btn-primary" href="/messages/{{item[0]}}">Открыть</a>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display:flex; flex-direction: row; align-items: center">
+    <h1>{{user.name}}</h1>
+</div>
+<div class="col-md6 border rounded">
+    <div class="row">
+        <div class="col">
+            <div class="text-justify">
+                <h4 align="left">Почта: {{user.email}}</h4>
+                <h4 align="left">Зарегистрирован: {{ ','.join(user.created_date.__str__().split('.')[:-1]) }}</h4>
+                {% if not user.can_comment %}
+                <h4 align="left">Не может писать комментарии!</h4>
+                {% endif %}
+                {% if not user.can_make_mods %}
+                <h4 align="left">Не может публиковать модификации!</h4>
+                {% endif %}
+                {% if user.can_control_news %}
+                <h4 align="left">Управляет разделом новостей</h4>
+                {% endif %}
+                {% if user.can_control_mods %}
+                <h4 align="left">Управляет разделом модов</h4>
+                {% endif %}
+                {% if user.can_control_users %}
+                <h4 align="left">Управляет пользователями</h4>
+                {% endif %}
+            </div>
+            {% if current_user.is_authenticated and current_user.id == user.id%}
+            <div class="btn-toolbar" role="group">
+                <script>
+                            function ShowKey(){
+                                key = document.getElementById("key");
+                                key.style.display = "inline";
+                                button = document.getElementById("button");
+                                button.setAttribute("onclick", "HideKey()");
+                                button.textContent = "Скрыть API ключ"
+                            }
+                            function HideKey(){
+                                key = document.getElementById("key");
+                                key.style.display = "none";
+                                button = document.getElementById("button");
+                                button.setAttribute("onclick", "ShowKey()");
+                                button.textContent = "Показать API ключ"
+                            }
+
+
+                </script>
+                <p>
+                    <a class="btn btn-primary" data-toggle="collapse" href="#key" role="button" aria-expanded="false"
+                       aria-controls="key">
+                        Показать API ключ
+                    </a>
+                    <script>
+                        async function update_key(){
+                            response = await fetch('/update_api_key', {method: 'POST'});
+                            if(response.ok){
+                                location.reload();
+                            }else{
+                                alert('Ошибка ' + response.status + '!');
+                            }
+                        }
+                    </script>
+                    <button class="btn btn-primary" onclick="update_key()">Получить новый ключ</button>
+                </p>
+            </div>
+            <div class="collapse" id="key">
+                <div class="card card-body">
+                    <div class="text-justify"> Api ключ: {{ user.api_key }}</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-auto">
+            <img width="200" height="200" src="{{ user.profile_image }}">
+            {% set rating = user.get_rating() %}
+            <h4>Рейтинг:
+                {% if rating > 0 %}
+                    <font color="green">{{ rating }}</font>
+                {% elif rating < 0 %}
+                    <font color="red">{{ rating }}</font>
+                {% else %}
+                    <font color="grey">{{ rating }}</font>
+                {% endif %}
+            </h4>
+        </div>
+    </div>
+</div>
+{% if user.posted_mods[0] %}
+    <div class="col-md6 border rounded">
+        <h1>Опубликованные модификации</h1>
+        <div class="card-columns">
+        {% for item in user.posted_mods.order_by("updated_date") %}
+            {% include 'mod_card.html' %}
+        {% endfor %}
+        </div>
+    </div>
+{% else %}
+    <h1>Нет опубликованны модификаций</h1>
+{% endif %}
+{% endblock %}

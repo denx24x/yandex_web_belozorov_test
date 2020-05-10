@@ -1,0 +1,15 @@
+<div class="card">
+    <div class="d-flex justify-content-between">
+        <div class="text-justify"><h4>{{item.title}}</h4></div>
+            <div align="right" class="p-2">
+            {% if current_user.is_authenticated and current_user.can_control_news%}
+                <a class="btn btn-primary" href="/edit/news/{{item.id}}">Изменить</a>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+    <div>
+        <div class="text-justify word-break">{{ item.content }}</div>
+        Автор - <a href="/profile/{{item.user.name}}">{{item.user.name}}</a>, Дата публикации - {{ ','.join(item.created_date.__str__().split('.')[:-1]) }}
+    </div>
+</div>
