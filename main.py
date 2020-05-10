@@ -15,10 +15,8 @@ from data.confirmations import Confirmation
 from data.user_messages import UserMessage
 from sqlalchemy import desc, func, case, and_, or_
 from data.viewer_association import ViewerAssociation
-from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore
 from resources import news_resource, users_resource, message_resource, vote_resource, confirmation_resource, login_resource, api_update_resource, comment_resource, mod_resource
 from flask_restful import reqparse, abort, Api, Resource
-from sqlalchemy_imageattach.entity import current_store
 from flask_restful import reqparse
 from werkzeug.utils import secure_filename
 import random

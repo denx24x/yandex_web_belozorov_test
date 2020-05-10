@@ -4,9 +4,6 @@ import sqlalchemy
 from sqlalchemy_serializer import SerializerMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.datastructures import FileStorage
-from sqlalchemy_imageattach.entity import Image, image_attachment, store_context
-from sqlalchemy_imageattach.stores.fs import BaseFileSystemStore, FileSystemStore, HttpExposedFileSystemStore
-from sqlalchemy_imageattach.entity import current_store
 from sqlalchemy import orm
 from string import ascii_letters
 import random
