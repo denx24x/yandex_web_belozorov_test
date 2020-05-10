@@ -4,3 +4,4 @@ wtforms
 werkzeug
 flask_wtf
 flask_login
+SQLAlchemy-serializer
