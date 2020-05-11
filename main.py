@@ -39,10 +39,9 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdxjPMUAAAAAEmmGwakbtfjn2x3heWhavRy_jml'
 app.config['RECAPTCHA_PRIVATE_KEY'] = '6LdxjPMUAAAAAG_kKlRdY7kpG7pixTbZ1Qmaf45A'  # ой...
 
-app.config['MOD_IMAGES_UPLOAD_FOLDER'] = 'uploads\\modImages'
-app.config['USER_IMAGES_UPLOAD_FOLDER'] = 'uploads\\userImages'
-app.config['MOD_FILES_UPLOAD_FOLDER'] = 'uploads\\modFiles'
-app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['MOD_IMAGES_UPLOAD_FOLDER'] = 'uploads/modImages'
+app.config['USER_IMAGES_UPLOAD_FOLDER'] = 'uploads/userImages'
+app.config['MOD_FILES_UPLOAD_FOLDER'] = 'uploads/modFiles'
 app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
 
 
@@ -146,17 +145,17 @@ def get_file_root(filename):
 
 @app.route('/uploads/modImages/<id>/<filename>')
 def get_file_mod_image(id, filename):
-    return send_from_directory(os.path.join('uploads/modImages/', id), filename)
+    return send_from_directory('uploads', secure_filename(os.path.join('/modImages/', id, filename)))
 
 
 @app.route('/uploads/modFiles/<id>/<filename>')
 def get_file_mod_files(id, filename):
-    return send_from_directory(os.path.join('uploads/modFiles', id), filename)
+    return send_from_directory('uploads', secure_filename(os.path.join('/modFiles/', id, filename)))
 
 
 @app.route('/uploads/userImages/<id>/<filename>')
 def get_file_user_images(id, filename):
-    return send_from_directory(os.path.join('uploads/userImages', id), filename)
+    return send_from_directory('uploads', secure_filename(os.path.join('/userImages/', id, filename)))
 
 
 @app.route('/poll', methods=['POST'])
@@ -296,7 +295,7 @@ def register():
                 filename = 'profile_image.' + form.profile_image.data.filename.rsplit('.', 1)[1].lower()
                 form.profile_image.data.save(
                     os.path.join(app.root_path, app.config['USER_IMAGES_UPLOAD_FOLDER'], str(user.id), filename))
-                user.profile_image = os.path.join('\\', app.config['USER_IMAGES_UPLOAD_FOLDER'], str(user.id), filename)
+                user.profile_image = os.path.join('/', app.config['USER_IMAGES_UPLOAD_FOLDER'], str(user.id), filename)
                 session.commit()
             except Exception:
                 shutil.rmtree(os.path.join(app.config['USER_IMAGES_UPLOAD_FOLDER'], str(user.id)))
@@ -445,19 +444,19 @@ def add_mod():
             os.makedirs(os.path.join(app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id)))
             form.file_content.data.save(
                 os.path.join(app.root_path, app.config['MOD_FILES_UPLOAD_FOLDER'], str(mod.id), filename))
-            mod.file = os.path.join('\\', app.config['MOD_FILES_UPLOAD_FOLDER'], str(mod.id), filename)
+            mod.file = os.path.join('/', app.config['MOD_FILES_UPLOAD_FOLDER'], str(mod.id), filename)
             if form.poster.data is not None:
                 filename = 'poster.' + form.poster.data.filename.rsplit('.', 1)[1].lower()
                 form.poster.data.save(
                     os.path.join(app.root_path, app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename))
-                mod.poster = os.path.join('\\', app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename)
+                mod.poster = os.path.join('/', app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename)
             for ind, item in enumerate(form.additional_images):
                 if item.data is not None:
                     filename = str(ind + 1) + '.' + item.data.filename.rsplit('.', 1)[1].lower()
                     item.data.save(
                         os.path.join(app.root_path, app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename))
                     mod.images.append(ModImages(
-                        content=os.path.join('\\', app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename)))
+                        content=os.path.join('/', app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename)))
         except Exception:
             shutil.rmtree(os.path.join(app.config['MOD_FILES_UPLOAD_FOLDER'], str(mod.id)))
             shutil.rmtree(os.path.join(app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id)))
