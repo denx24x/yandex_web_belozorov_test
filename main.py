@@ -45,6 +45,10 @@ app.config['MOD_FILES_UPLOAD_FOLDER'] = 'uploads\\modFiles'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
 
+app.add_url_rule('/uploads/<location>/<filename>', 'uploaded_file',
+                 build_only=True)
+app.add_url_rule('/uploads/<filename>', 'uploaded_file',
+                 build_only=True)
 app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/uploads': os.path.join(os.path.dirname(__file__), 'uploads') })
 
 login_manager = LoginManager()
