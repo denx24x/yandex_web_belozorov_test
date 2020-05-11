@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, Blueprint, jsonify, abort, request
+from flask import Flask, render_template, redirect, Blueprint, jsonify, abort, request, send_from_directory
 from data import db_session
 from forms import *
 from flask_login import LoginManager, login_required, logout_user, current_user, login_user
@@ -39,17 +39,13 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdxjPMUAAAAAEmmGwakbtfjn2x3heWhavRy_jml'
 app.config['RECAPTCHA_PRIVATE_KEY'] = '6LdxjPMUAAAAAG_kKlRdY7kpG7pixTbZ1Qmaf45A'  # ой...
 
-app.config['MOD_IMAGES_UPLOAD_FOLDER'] = 'tmp\\modImages'
-app.config['USER_IMAGES_UPLOAD_FOLDER'] = 'tmp\\userImages'
-app.config['MOD_FILES_UPLOAD_FOLDER'] = 'ModFiles'
-app.config['UPLOAD_FOLDER'] = '$HOME\\tmp'
+app.config['MOD_IMAGES_UPLOAD_FOLDER'] = 'uploads\\modImages'
+app.config['USER_IMAGES_UPLOAD_FOLDER'] = 'uploads\\userImages'
+app.config['MOD_FILES_UPLOAD_FOLDER'] = 'uploads\\modFiles'
+app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
 
-app.add_url_rule('/tmp/<location1>/<location2>/<filename>', 'uploaded_file',
-                 build_only=True)
-app.add_url_rule('/tmp/<filename>', 'uploaded_file',
-                 build_only=True)
-app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/tmp': 'tmp\\'})
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -141,6 +137,26 @@ def check_general_state(user_id, user_data):  # подгоняет данные 
     if not len(res):
         return {'change': []}
     return {'change': res}
+
+
+@app.route('/uploads/<filename>')
+def get_file_root(filename):
+    return send_from_directory('uploads', filename)
+
+
+@app.route('/uploads/modImages/<id>/<filename>')
+def get_file_mod_image(id, filename):
+    return send_from_directory(os.path.join('uploads/modImages/', id), filename)
+
+
+@app.route('/uploads/modFiles/<id>/<filename>')
+def get_file_mod_files(id, filename):
+    return send_from_directory(os.path.join('uploads/modFiles', id), filename)
+
+
+@app.route('/uploads/userImages/<id>/<filename>')
+def get_file_user_images(id, filename):
+    return send_from_directory(os.path.join('uploads/userImages', id), filename)
 
 
 @app.route('/poll', methods=['POST'])
