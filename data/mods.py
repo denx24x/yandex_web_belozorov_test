@@ -27,7 +27,7 @@ class Mod(SqlAlchemyBase, SerializerMixin):
     user_id = sqlalchemy.Column(sqlalchemy.Integer,
                                 sqlalchemy.ForeignKey("User.id"))
     user = orm.relation('User', foreign_keys=[user_id])
-    poster = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='\\$HOME\\tmp\\poster_default.png')
+    poster = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='\\tmp\\poster_default.png')
 
     verified_by_admin = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
 

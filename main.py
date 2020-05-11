@@ -39,9 +39,9 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdxjPMUAAAAAEmmGwakbtfjn2x3heWhavRy_jml'
 app.config['RECAPTCHA_PRIVATE_KEY'] = '6LdxjPMUAAAAAG_kKlRdY7kpG7pixTbZ1Qmaf45A'  # ой...
 
-app.config['MOD_IMAGES_UPLOAD_FOLDER'] = '$HOME\\tmp\\modImages'
-app.config['USER_IMAGES_UPLOAD_FOLDER'] = '$HOME\\tmp\\userImages'
-app.config['MOD_FILES_UPLOAD_FOLDER'] = '$HOME\\tmp\\modFiles'
+app.config['MOD_IMAGES_UPLOAD_FOLDER'] = 'tmp\\modImages'
+app.config['USER_IMAGES_UPLOAD_FOLDER'] = 'tmp\\userImages'
+app.config['MOD_FILES_UPLOAD_FOLDER'] = 'ModFiles'
 app.config['UPLOAD_FOLDER'] = '$HOME\\tmp'
 app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
 
@@ -49,7 +49,7 @@ app.add_url_rule('/tmp/<location1>/<location2>/<filename>', 'uploaded_file',
                  build_only=True)
 app.add_url_rule('/tmp/<filename>', 'uploaded_file',
                  build_only=True)
-app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/tmp': '$HOME\\tmp') })
+app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/tmp': 'tmp\\'})
 
 login_manager = LoginManager()
 login_manager.init_app(app)

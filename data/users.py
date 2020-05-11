@@ -31,7 +31,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     api_key = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
 
-    profile_image = sqlalchemy.Column(sqlalchemy.String, default='\\$HOME\\tmp\\profile_image_default.png')
+    profile_image = sqlalchemy.Column(sqlalchemy.String, default='\\tmp\\profile_image_default.png')
 
     verified = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
 
