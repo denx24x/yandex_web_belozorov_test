@@ -39,17 +39,17 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdxjPMUAAAAAEmmGwakbtfjn2x3heWhavRy_jml'
 app.config['RECAPTCHA_PRIVATE_KEY'] = '6LdxjPMUAAAAAG_kKlRdY7kpG7pixTbZ1Qmaf45A'  # ой...
 
-app.config['MOD_IMAGES_UPLOAD_FOLDER'] = 'uploads\\modImages'
-app.config['USER_IMAGES_UPLOAD_FOLDER'] = 'uploads\\userImages'
-app.config['MOD_FILES_UPLOAD_FOLDER'] = 'uploads\\modFiles'
-app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['MOD_IMAGES_UPLOAD_FOLDER'] = 'tmp\\modImages'
+app.config['USER_IMAGES_UPLOAD_FOLDER'] = 'tmp\\userImages'
+app.config['MOD_FILES_UPLOAD_FOLDER'] = 'tmp\\modFiles'
+app.config['UPLOAD_FOLDER'] = 'tmp'
 app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
 
-app.add_url_rule('/uploads/<location1>/<location2>/<filename>', 'uploaded_file',
+app.add_url_rule('/tmp/<location1>/<location2>/<filename>', 'uploaded_file',
                  build_only=True)
-app.add_url_rule('/uploads/<filename>', 'uploaded_file',
+app.add_url_rule('/tmp/<filename>', 'uploaded_file',
                  build_only=True)
-app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/uploads': os.path.join(os.path.dirname(__file__), 'uploads') })
+app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/tmp': os.path.join(os.path.dirname(__file__), 'tmp') })
 
 login_manager = LoginManager()
 login_manager.init_app(app)
