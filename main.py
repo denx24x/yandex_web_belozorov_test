@@ -14,10 +14,9 @@ from data.mod_rating import ModRating
 from data.confirmations import Confirmation
 from data.user_messages import UserMessage
 from sqlalchemy import desc, func, case, and_, or_
-from data.viewer_association import ViewerAssociation
-from resources import news_resource, users_resource, message_resource, vote_resource, confirmation_resource, login_resource, api_update_resource, comment_resource, mod_resource
+from resources import news_resource, users_resource, message_resource, vote_resource, confirmation_resource, \
+    login_resource, api_update_resource, comment_resource, mod_resource
 from flask_restful import reqparse, abort, Api, Resource
-from flask_restful import reqparse
 from werkzeug.utils import secure_filename
 import random
 from email_handle import *
@@ -26,11 +25,11 @@ import os
 import time
 import json
 import datetime
+from resources import user_ops
 import copy
 import smtplib
 from email.mime.text import MIMEText
 import threading
-
 from werkzeug.middleware.shared_data import SharedDataMiddleware
 import sys
 
@@ -49,7 +48,7 @@ app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
 app.add_url_rule('/uploads/<filename>', 'uploaded_file',
                  build_only=True)
 app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
-    '/uploads':  app.config['UPLOAD_FOLDER']
+    '/uploads': app.config['UPLOAD_FOLDER']
 })
 
 login_manager = LoginManager()
@@ -100,8 +99,10 @@ class LongPollHandler(threading.Thread):  # раздача лонгполлов)
 
 def get_all_comments(session, id, parent_type):
     res = []
-    for i in session.query(Comment).filter(and_(Comment.parent_type == parent_type, Comment.parent_id == id)).order_by(Comment.created_date).all():
-        if session.query(Comment).filter(and_(Comment.parent_type == 'comment', Comment.parent_id == i.id)).order_by(Comment.created_date).first():
+    for i in session.query(Comment).filter(and_(Comment.parent_type == parent_type, Comment.parent_id == id)).order_by(
+            Comment.created_date).all():
+        if session.query(Comment).filter(and_(Comment.parent_type == 'comment', Comment.parent_id == i.id)).order_by(
+                Comment.created_date).first():
             res.append([i, get_all_comments(session, i.id, "comment")])
         else:
             res.append([i])
@@ -285,9 +286,11 @@ def register():
                 shutil.rmtree(os.path.join(app.config['USER_IMAGES_UPLOAD_FOLDER'], str(user.id)))
                 session.delete(user)
                 session.commit()
-                return render_template('/add/users.html', title='Регистрация', form=form, message='Ошибка загрузки изображения!')
+                return render_template('/add/users.html', title='Регистрация', form=form,
+                                       message='Ошибка загрузки изображения!')
         send_verification_message(user)
-        return render_template('/add/users.html', title='Регистрация', form=form, message='Успешно! Осталось только подтвердить регистрацию, перейдя по ссылке в письме, которое мы Вам отправим.')
+        return render_template('/add/users.html', title='Регистрация', form=form,
+                               message='Успешно! Осталось только подтвердить регистрацию, перейдя по ссылке в письме, которое мы Вам отправим.')
     return render_template('/add/users.html', title='Регистрация', form=form)
 
 
@@ -333,22 +336,23 @@ def edit_news(id):
     return render_template('/edit/news.html', title='Изменить новость', form=form)
 
 
-@app.route('/add/news/', methods=['GET', 'POST'])
+@app.route('/add/news', methods=['GET', 'POST'])
 @login_required
 def add_news():
-    if not load_user(current_user.id).can_control_news:
+    if not current_user.can_control_news:
         return abort(403)
     form = AddNewsForm()
     if form.validate_on_submit():
         session = db_session.create_session()
-        news = News(title=form.title.data, content=form.content.data, user_id=current_user.id, user=session.query(User).filter(User.id == current_user.id).first())
+        news = News(title=form.title.data, content=form.content.data, user_id=current_user.id,
+                    user=session.query(User).filter(User.id == current_user.id).first())
         session.add(news)
         session.commit()
         return redirect("/news/" + str(news.id))
     return render_template('/add/news.html', title='Добавить новость', form=form)
 
 
-@app.route('/users/')
+@app.route('/users')
 @login_required
 def users():
     if not load_user(current_user.id).can_control_users:
@@ -357,17 +361,6 @@ def users():
     users = session.query(User).order_by(User.email)
     session.close()
     return render_template("users.html", users=users)
-
-
-@app.route('/edit/users/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_users(id):
-    if not load_user(current_user.id).can_control_users:
-        abort(403)
-    form = EditUserForm()
-    if form.validate_on_submit():
-        return redirect("/news")
-    return render_template('/edit/user.html', title='Изменить пользователя', form=form)
 
 
 @app.route('/profile/<name>')
@@ -386,7 +379,8 @@ def index():
     nws = session.query(News).order_by(desc(News.updated_date)).limit(3)
     mods_new = session.query(Mod).order_by(Mod.created_date.desc()).limit(10)
     mods_popular = sorted(session.query(Mod).all(), key=lambda x: -x.get_popularity())[:10]
-    mods_best = session.query(Mod).outerjoin(ModRating).group_by(Mod).order_by(func.sum(ModRating.rating).desc()).limit(10)
+    mods_best = session.query(Mod).outerjoin(ModRating).group_by(Mod).order_by(func.sum(ModRating.rating).desc()).limit(
+        10)
     return render_template("index.html", news=nws, mods_new=mods_new, mods_popular=mods_popular, mods_best=mods_best)
 
 
@@ -408,7 +402,8 @@ def mod(id):
         user = session.query(User).get(current_user.id)
         if not user.viewed.filter(Mod.id == mod.id).first():
             user.viewed.append(mod)
-        rate = session.query(ModRating).filter(and_(ModRating.user_id == current_user.id, ModRating.mod_id == mod.id)).first()
+        rate = session.query(ModRating).filter(
+            and_(ModRating.user_id == current_user.id, ModRating.mod_id == mod.id)).first()
     session.commit()
     return render_template("mod_single.html", mod=mod, rate=rate, comments=get_all_comments(session, mod.id, 'mod'))
 
@@ -432,17 +427,21 @@ def add_mod():
             filename = secure_filename(form.file_content.data.filename)
             os.makedirs(os.path.join(app.config['MOD_FILES_UPLOAD_FOLDER'], str(mod.id)))
             os.makedirs(os.path.join(app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id)))
-            form.file_content.data.save(os.path.join(app.root_path, app.config['MOD_FILES_UPLOAD_FOLDER'], str(mod.id), filename))
+            form.file_content.data.save(
+                os.path.join(app.root_path, app.config['MOD_FILES_UPLOAD_FOLDER'], str(mod.id), filename))
             mod.file = os.path.join('\\', app.config['MOD_FILES_UPLOAD_FOLDER'], str(mod.id), filename)
             if form.poster.data is not None:
                 filename = 'poster.' + form.poster.data.filename.rsplit('.', 1)[1].lower()
-                form.poster.data.save(os.path.join(app.root_path, app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename))
+                form.poster.data.save(
+                    os.path.join(app.root_path, app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename))
                 mod.poster = os.path.join('\\', app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename)
             for ind, item in enumerate(form.additional_images):
                 if item.data is not None:
                     filename = str(ind + 1) + '.' + item.data.filename.rsplit('.', 1)[1].lower()
-                    item.data.save(os.path.join(app.root_path, app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename))
-                    mod.images.append(ModImages(content=os.path.join('\\', app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename)))
+                    item.data.save(
+                        os.path.join(app.root_path, app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename))
+                    mod.images.append(ModImages(
+                        content=os.path.join('\\', app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id), filename)))
         except Exception:
             shutil.rmtree(os.path.join(app.config['MOD_FILES_UPLOAD_FOLDER'], str(mod.id)))
             shutil.rmtree(os.path.join(app.config['MOD_IMAGES_UPLOAD_FOLDER'], str(mod.id)))
@@ -464,7 +463,8 @@ def edit_mod(id):
         return abort(403)
     form = AddUserForm()
     if form.validate_on_submit():
-        return render_template('/add/users.html', title='Регистрация', form=form, message='Успешно! Осталось только подтвердить регистрацию, перейдя по ссылке в письме, которое мы Вам отправим.')
+        return render_template('/add/users.html', title='Регистрация', form=form,
+                               message='Успешно! Осталось только подтвердить регистрацию, перейдя по ссылке в письме, которое мы Вам отправим.')
     return render_template('/add/users.html', title='Регистрация', form=form)
 
 
@@ -475,7 +475,8 @@ def search():
     except Exception:
         return abort(400)
     session = db_session.create_session()
-    result = session.query(Mod).join(User).filter(or_(or_(Mod.title.like(query), User.name.like(query)), Mod.content.like(query))).all()
+    result = session.query(Mod).join(User).filter(
+        or_(or_(Mod.title.like(query), User.name.like(query)), Mod.content.like(query))).all()
     return render_template('search_results.html', results=result)
 
 
@@ -484,7 +485,9 @@ def search():
 def messages():
     session = db_session.create_session()
     vars = dict()
-    for i in session.query(UserMessage).filter(or_(UserMessage.sender_id == current_user.id, UserMessage.receiver_id == current_user.id)).order_by(UserMessage.created_date):
+    for i in session.query(UserMessage).filter(
+            or_(UserMessage.sender_id == current_user.id, UserMessage.receiver_id == current_user.id)).order_by(
+            UserMessage.created_date):
         vars[i.sender.name if i.sender.name != current_user.name else i.receiver.name] = i.message
     return render_template('messages_all.html', messages=list(vars.items()))
 
@@ -496,8 +499,13 @@ def message(name):
     user = session.query(User).filter(User.name == name).first()
     if not user or not user.verified:
         return abort(404)
-    session.query(LongPollEvent).filter(and_(LongPollEvent.user_id == user.id, and_(LongPollEvent.sender == str(user.id), LongPollEvent.event_type == 'message_unread'))).delete()
-    messages_list = session.query(UserMessage).filter(or_(and_(UserMessage.sender_id == current_user.id, UserMessage.receiver_id == user.id), and_(UserMessage.sender_id == user.id, UserMessage.receiver_id == current_user.id))).order_by(UserMessage.created_date)
+    session.query(LongPollEvent).filter(and_(LongPollEvent.user_id == user.id,
+                                             and_(LongPollEvent.sender == str(user.id),
+                                                  LongPollEvent.event_type == 'message_unread'))).delete()
+    messages_list = session.query(UserMessage).filter(
+        or_(and_(UserMessage.sender_id == current_user.id, UserMessage.receiver_id == user.id),
+            and_(UserMessage.sender_id == user.id, UserMessage.receiver_id == current_user.id))).order_by(
+        UserMessage.created_date)
     session.commit()
     return render_template('messages_user.html', messages=messages_list, receiver=user.name)
 
@@ -516,10 +524,18 @@ def main():
     api.add_resource(confirmation_resource.ConfirmationResource, '/send_confirmation')
     api.add_resource(mod_resource.ModsListResource, '/api/mod')
     api.add_resource(mod_resource.ModResource, '/api/mod/<int:id>')
+    api.add_resource(mod_resource.ModConfirmResource, '/verify_mod')
+    api.add_resource(user_ops.UserRestrictComment, '/user_change_can_comment')
+    api.add_resource(user_ops.UserRestrictControlMods, '/user_change_can_control_mods')
+    api.add_resource(user_ops.UserRestrictControlNews, '/user_change_can_control_news')
+    api.add_resource(user_ops.UserRestrictControlUsers, '/user_change_can_control_users')
+    api.add_resource(user_ops.UserRestrictPostMod, '/user_change_can_make_mods')
+
     session = db_session.create_session()
     bf = session.query(User).filter(User.name == 'admin').first()
     if not bf:
-        usr = User(email="admin@this", name='admin', can_control_users=True, can_control_mods=True, can_control_comments=True, can_control_news=True, verified=True, api_key='yes, i am admin')
+        usr = User(email="admin@this", name='admin', can_control_users=True, can_control_mods=True,
+                   can_control_comments=True, can_control_news=True, verified=True, api_key='yes, i am admin')
         usr.set_password('123')
         session.add(usr)
         usr = User(email="test@this", name='test', can_control_users=False, can_control_mods=False,

@@ -38,11 +38,26 @@
             {% endif %}
         </div>
     </div>
-    {% if mod.verified_by_admin %}
-    <h5>Эта модификация была проверена модератором.</h5>
-    {% else %}
-    <h5>Эта модификация еще не проверена модератором!</h5>
-    {% endif %}
+    <div>
+        <script>
+            async function verify_mod(id){
+                response = await fetch('/verify_mod?id=' + id, {method: 'POST'});
+                if(response.ok){
+                    location.reload();
+                }else{
+                    alert('Ошибка ' + response.status + '!');
+                }
+            }
+        </script>
+        {% if mod.verified_by_admin %}
+        <h5>Эта модификация была проверена модератором.</h5>
+        {% else %}
+        <h5>Эта модификация еще не проверена модератором!</h5>
+            {% if current_user.is_authenticated and current_user.can_control_mods %}
+            <button class="btn btn-primary" onclick="verify_mod({{mod.id}})">Отметить как проверенную</button>
+            {% endif %}
+        {% endif %}
+    </div>
 </div>
 <hr>
 {% if mod.images[0] %}
@@ -75,7 +90,7 @@
 <hr>
 {% endif %}
 <h4>Комментарии</h4>
-{% if current_user.is_authenticated %}
+{% if current_user.is_authenticated and current_user.can_comment %}
 <div class="input-group mb-3">
             <input class="form-control" id="CommentMain">
             <button class="btn btn-primary" onclick="send_comment({{mod.id}}, 'mod', 'CommentMain');">Отправить</button>

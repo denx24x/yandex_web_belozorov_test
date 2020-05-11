@@ -26,7 +26,8 @@
                 <h4 align="left">Управляет пользователями</h4>
                 {% endif %}
             </div>
-            {% if current_user.is_authenticated and current_user.id == user.id%}
+
+            {% if current_user.is_authenticated and current_user.id == user.id %}
             <div class="btn-toolbar" role="group">
                 <script>
                             function ShowKey(){
@@ -69,6 +70,27 @@
                     <div class="text-justify"> Api ключ: {{ user.api_key }}</div>
                 </div>
             </div>
+            {% endif %}
+            <hr>
+            {% if current_user.is_authenticated and current_user.can_control_users %}
+                <script>
+                    async function send(url, id){
+                        response = await fetch('/' + url + '?id=' + id, {method: 'POST'});
+                        if(response.ok){
+                            location.reload();
+                        }else{
+                            alert('Ошибка ' + response.status + '!');
+                        }
+                    }
+                </script>
+                <div class="p-1">
+                    <li><a href="" onclick="send('user_change_can_comment', {{user.id}})">{% if user.can_comment %}Запретить комментировать{% else %}Разрешить комментировать{% endif %}</a></li>
+                    <li><a href="" onclick="send('user_change_can_make_mods', {{user.id}})">{% if user.can_make_mods %}Запретить публиковать модификации{% else %}Разрешить публиковать модификации{% endif %}</a></li>
+                    <li><a href="" onclick="send('user_change_can_control_mods', {{user.id}})">{% if user.can_control_mods %}Запретить управлять разделом модификаций{% else %}Разрешить управлять разделом модификаций{% endif %}</a></li>
+                    <li><a href="" onclick="send('user_change_can_control_news', {{user.id}})">{% if user.can_control_news %}Запретить управлять разделом новостей{% else %}Разрешить управлять разделом новостей{% endif %}</a></li>
+                    <li><a  href="" onclick="send('user_change_can_control_users', {{user.id}})">{% if user.can_control_users %}Запретить управлять пользователями{% else %}Разрешить управлять пользователями{% endif %}</a></li>
+                </div>
+
             {% endif %}
         </div>
         <div class="col-auto">

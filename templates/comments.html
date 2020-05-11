@@ -21,7 +21,7 @@
         <hr style='margin: 0;'>
         <div class="footer-comment">
             <div class="row">
-                {% if current_user.is_authenticated %}
+                {% if current_user.is_authenticated and current_user.can_comment %}
                 <div class="col" align="left"><a onclick="make_comment_field('{{item[0].id}}');" id="comment-reply-{{item[0].id}}">Ответить</a></div>
                 {% endif %}
                 <div class="col" align="right">

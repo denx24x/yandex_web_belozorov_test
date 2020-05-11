@@ -24,6 +24,8 @@ class CommentResource(Resource):
         args = parser.parse_args()
         session = db_session.create_session()
         user = get_sender_user(session, args)
+        if not user.can_comment:
+            abort(403)
         if args['type'] == 'comment':
             comment = session.query(Comment).get(args['id'])
         elif args['type'] == 'mod':

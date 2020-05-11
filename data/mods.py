@@ -35,7 +35,7 @@ class Mod(SqlAlchemyBase, SerializerMixin):
     file = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     updated_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
 
-    viewers = orm.relationship("User", secondary="ViewerAssociation", backref=orm.backref("viewers"), lazy='dynamic')
+    viewers = orm.relationship("User", secondary="ViewerAssociation", backref=orm.backref("Mod"), lazy='dynamic')
 
     ratings = orm.relationship('ModRating', lazy='dynamic')
 

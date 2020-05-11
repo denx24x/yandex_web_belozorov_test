@@ -3,6 +3,7 @@ from wtforms.validators import DataRequired, Length
 from wtforms.fields.html5 import EmailField
 from flask_wtf.file import FileRequired, FileAllowed, FileField
 from flask_wtf import FlaskForm, RecaptchaField
+
 IMAGES = ('jpg', 'jpe', 'jpeg', 'png', 'gif', 'svg', 'bmp', 'webp')
 ARCHIVES = ('gz', 'bz2', 'zip', 'tar', 'tgz', 'txz', '7z', 'rar')
 

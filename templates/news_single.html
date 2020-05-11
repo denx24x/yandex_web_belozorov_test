@@ -18,7 +18,7 @@
     </div>
 </div>
 <h4>Комментарии</h4>
-{% if current_user.is_authenticated %}
+{% if current_user.is_authenticated and current_user.can_comment %}
 <div class="input-group mb-3">
             <input class="form-control" id="CommentMain">
             <button class="btn btn-primary" onclick="send_comment({{item.id}}, 'news', 'CommentMain');">Отправить</button>
